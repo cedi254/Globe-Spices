@@ -1,0 +1,14 @@
+import sharp from 'sharp';
+import fs from 'node:fs/promises';
+import {geoOrthographic,geoPath,geoGraticule10} from 'd3-geo';
+const input='public/images/collection.png';
+const names=['schweiz','indien','tuerkei','italien'];
+const xs=[76,429,780,1132];
+for(let i=0;i<4;i++)await sharp(input).extract({left:xs[i],top:130,width:335,height:687}).webp({quality:95}).toFile(`public/images/${names[i]}.webp`);
+await sharp('public/images/spice-floor.png').resize(1536).webp({quality:86}).toFile('public/images/spice-floor.webp');
+const world=JSON.parse(await fs.readFile('public/world.json','utf8'));
+world.features=world.features.map(f=>({type:'Feature',properties:{name:f.properties.ADMIN},geometry:f.geometry}));
+await fs.writeFile('public/world.json',JSON.stringify(world));
+const projection=geoOrthographic().translate([300,290]).scale(267).rotate([-28,-27]);const path=geoPath(projection);
+const svg=`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 600"><defs><radialGradient id="light" cx="30%" cy="25%" r="85%"><stop offset="0" stop-color="#fff" stop-opacity=".2"/><stop offset=".6" stop-color="#fff" stop-opacity="0"/><stop offset="1" stop-color="#222b18" stop-opacity=".4"/></radialGradient></defs><circle cx="300" cy="290" r="267" fill="#ece4d2"/><path d="${path(geoGraticule10())}" fill="none" stroke="#bcb499" stroke-width=".5"/>${world.features.map(f=>`<path d="${path(f)}" fill="#626a49" stroke="#a4a58c" stroke-width=".45"/>`).join('')}<circle cx="300" cy="290" r="267" fill="url(#light)"/></svg>`;
+await fs.writeFile('public/images/globe-fallback.svg',svg);

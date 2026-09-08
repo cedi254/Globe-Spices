@@ -1,0 +1,10 @@
+import sharp from 'sharp';
+import fs from 'node:fs/promises';
+import {geoEquirectangular,geoPath,geoGraticule10} from 'd3-geo';
+const reference='C:/Users/myria/AppData/Local/Temp/codex-clipboard-3fd21e29-260a-4ba0-afd2-d288dd98af33.png';
+await sharp(reference).extract({left:0,top:558,width:853,height:1016}).webp({quality:92}).toFile('public/images/hero-still.webp');
+const world=JSON.parse(await fs.readFile('public/world.json','utf8'));
+const projection=geoEquirectangular().translate([1024,512]).scale(2048/(2*Math.PI));const path=geoPath(projection);
+const svg=`<svg xmlns="http://www.w3.org/2000/svg" width="2048" height="1024"><rect width="2048" height="1024" fill="#eee6d4"/><path d="${path(geoGraticule10())}" fill="none" stroke="#ccc3aa" stroke-width=".65"/>${world.features.map(f=>`<path d="${path(f)}" fill="#596344" stroke="#a4a58c" stroke-width=".55"/>`).join('')}</svg>`;
+await sharp(Buffer.from(svg)).png().toFile('public/images/earth-texture.png');
+console.log('Hero still and globe texture ready');

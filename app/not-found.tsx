@@ -1,0 +1,1 @@
+export default function NotFound(){return <main className="not-found"><p className="eyebrow">GLOBE SPICES</p><h1>Hier geht die Reise<br/>nicht weiter.</h1><p>Dieses Gewürz konnten wir nicht finden.</p><a className="button" href="/">Zurück zur World Collection →</a></main>}
