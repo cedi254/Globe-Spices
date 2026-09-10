@@ -10,3 +10,8 @@ export function chapterState(tops, at) {
  const fraction=index<tops.length-1?Math.max(0,Math.min(1,(at-tops[index])/(tops[index+1]-tops[index]))):0;
  return {index,progress:index+Math.max(0,(fraction-.62)/.38)};
 }
+export function journeyProgress(index,total) {
+ if(total<=0)return 0;
+ const active=Math.max(0,Math.min(total-1,index));
+ return Math.round(((active+1)/total)*100);
+}

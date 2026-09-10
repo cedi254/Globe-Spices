@@ -7,7 +7,8 @@ export function jumpToCountry(index:number){
  const chapter=document.getElementById(products[index].id);
  if(!chapter)return;
  const top=chapter.getBoundingClientRect().top+scrollY-journeyOffset();
- window.scrollTo({top,behavior:'instant'});
+ const prefersReducedMotion=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+ window.scrollTo({top,behavior:prefersReducedMotion?'auto':'smooth'});
  history.replaceState(null,'',`#${products[index].id}`);
  chapter.focus({preventScroll:true});
 }
