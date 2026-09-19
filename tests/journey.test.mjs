@@ -1,7 +1,16 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { interpolateDestination, chapterState, journeyProgress } from '../app/journey-math.mjs';
-const stops=[[8.2,46.8],[78.9,22.6],[35.2,39],[12.6,42.5]];
+import { products } from '../app/products.ts';
+const stops=[[8.2,46.8],[12.6,42.5],[35.2,39],[78.9,22.6]];
+void test('scroll order keeps every 3D globe pin connected to the matching product',()=>{
+ assert.deepEqual(products.map(({id,coordinates})=>({id,coordinates})),[
+  {id:'schweiz',coordinates:[8.2,46.8]},
+  {id:'italien',coordinates:[12.6,42.5]},
+  {id:'tuerkei',coordinates:[35.2,39]},
+  {id:'indien',coordinates:[78.9,22.6]},
+ ]);
+});
 test('direct jumps settle exactly on destination',()=>{stops.forEach((point,i)=>assert.deepEqual(interpolateDestination(stops,i),point));});
 test('scrolling backward is deterministic and continuous',()=>{const forward=interpolateDestination(stops,.5);interpolateDestination(stops,2);assert.deepEqual(interpolateDestination(stops,.5),forward);assert.ok(forward[0]>8.2&&forward[0]<78.9);});
 test('out of range scroll stays at endpoints',()=>{assert.deepEqual(interpolateDestination(stops,-1),stops[0]);assert.deepEqual(interpolateDestination(stops,5),stops[3]);});
